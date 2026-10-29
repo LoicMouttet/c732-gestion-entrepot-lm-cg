@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('adresse');
             $table->string('codePostal');
             $table->string('ville');
-            $table->string('capaciteTotale');
+            $table->decimal('capaciteTotale', 12, 3); // Modifié en decimal pour les calculs de stock
             $table->timestamps();
         });
     }

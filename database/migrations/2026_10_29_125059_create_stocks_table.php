@@ -16,8 +16,12 @@ return new class extends Migration
             $table->integer('quantite');
             $table->string('statut');
             $table->date('dateMaj');
-            $table->foreignId('entrepot_id')->constrained('entrepots')->onDelete('cascade');
-            $table->foreignId('produit_id')->constrained('produits')->onDelete('cascade');
+
+            // Les 3 relations du MCD :
+            $table->foreignId('entreprise_cliente_id')->constrained('entreprise_clientes')->onDelete('cascade'); // Relation "louer"
+            $table->foreignId('entrepot_id')->constrained('entrepots')->onDelete('cascade'); // Relation "contenir" (Entrepôt)
+            $table->foreignId('produit_id')->constrained('produits')->onDelete('cascade'); // Relation "contenir" (Produit)
+
             $table->timestamps();
         });
     }

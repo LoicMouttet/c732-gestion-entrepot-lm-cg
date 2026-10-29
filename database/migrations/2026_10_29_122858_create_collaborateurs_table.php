@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('motDePasse');
             $table->string('role');
+            // Ajout de la clé étrangère pour la relation "employer" (1,N)
+            $table->foreignId('entreprise_cliente_id')->constrained('entreprise_clientes')->onDelete('cascade');
             $table->timestamps();
         });
     }
