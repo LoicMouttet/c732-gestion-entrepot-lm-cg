@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id(); // correspond à "num"
             $table->string('nom');
             $table->string('reference');
-            $table->string('statut');
             $table->text('description')->nullable();
             $table->string('categorie'); // Ajouté selon le MCD
             $table->timestamps();

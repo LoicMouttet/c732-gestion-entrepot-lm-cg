@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
             $table->integer('quantite');
-            $table->string('statut');
             $table->date('dateMaj');
 
             // Les 3 relations du MCD :
