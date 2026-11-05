@@ -26,13 +26,15 @@ class EntrepotController extends Controller
                 ->get();
         }
 
-        return view('home', compact('entrepots', 'resultats', 'search'));
+        // CORRECTION ICI : On pointe vers 'entrepots.index' au lieu de 'OLD_home'
+        return view('entrepots.index', compact('entrepots', 'resultats', 'search'));
     }
 
     public function show($id)
     {
         $entrepot = Entrepot::with('stocks.produit')->findOrFail($id);
 
-        return view('show', compact('entrepot'));
+        // CORRECTION ICI : On pointe vers 'entrepots.show' au lieu de 'OLD_show'
+        return view('entrepots.show', compact('entrepot'));
     }
 }

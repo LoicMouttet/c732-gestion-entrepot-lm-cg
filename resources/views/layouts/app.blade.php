@@ -14,7 +14,7 @@
 <!-- HEADER GLOBAL -->
 <header class="bg-white border-b border-gray-200 px-10 py-6 flex justify-between items-center relative shadow-sm z-40">
     <div class="flex items-center gap-5">
-        <a href="{{ url('/entrepots') }}" class="flex items-center">
+        <a href="{{ route('home') }}" class="flex items-center">
             <!-- Logo LogiFlex -->
             <img src="{{ asset('images/Logo_LogiFlex.png') }}" alt="LogiFlex" class="h-16 w-auto object-contain">
         </a>
@@ -43,8 +43,8 @@
 
         <!-- Menu déroulant -->
         <div id="userDropdown" class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg hidden py-2 z-50 text-sm">
-            <a href="{{ url('/entrepots') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="fa-solid fa-warehouse mr-2"></i> Mes Entrepôts</a>
-            <a href="{{ url('/login') }}" class="block px-4 py-2 text-red-600 hover:bg-gray-100"><i class="fa-solid fa-right-from-bracket mr-2"></i> Déconnexion</a>
+            <a href="{{ route('home') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="fa-solid fa-warehouse mr-2"></i> Mes Entrepôts</a>
+            <a href="{{ route('login') }}" class="block px-4 py-2 text-red-600 hover:bg-gray-100"><i class="fa-solid fa-right-from-bracket mr-2"></i> Déconnexion</a>
         </div>
     </div>
 </header>
@@ -76,17 +76,17 @@
             return;
         }
 
-        // Données fictives avec les 6 entrepôts distincts et leurs liens précis
+        // Données reliées aux ID de la base de données (1 à 6)
         const mockDatabase = [
-            { type: 'Entrepôt', name: 'Entrepôt A - Lyon Sud', detail: '123 Avenue de l’Industrie, Lyon', icon: 'fa-warehouse', url: "{{ url('/entrepots/lyon-sud') }}" },
-            { type: 'Entrepôt', name: 'Entrepôt B - Paris Nord', detail: '45 Rue de la Logistique, Paris', icon: 'fa-warehouse', url: "{{ url('/entrepots/paris-nord') }}" },
-            { type: 'Entrepôt', name: 'Entrepôt C - Marseille Port', detail: '12 Boulevard des Docks, Marseille', icon: 'fa-warehouse', url: "{{ url('/entrepots/marseille-port') }}" },
-            { type: 'Entrepôt', name: 'Entrepôt D - Lille Est', detail: '8 Zone Industrielle, Lille', icon: 'fa-warehouse', url: "{{ url('/entrepots/lille-est') }}" },
-            { type: 'Entrepôt', name: 'Entrepôt E - Bordeaux Ouest', detail: '14 Avenue du Vin, Bordeaux', icon: 'fa-warehouse', url: "{{ url('/entrepots/bordeaux-ouest') }}" },
-            { type: 'Entrepôt', name: 'Entrepôt F - Strasbourg Centre', detail: '3 Rue de l’Europe, Strasbourg', icon: 'fa-warehouse', url: "{{ url('/entrepots/strasbourg-centre') }}" },
+            { type: 'Entrepôt', name: 'Entrepôt A - Lyon Sud', detail: '123 Avenue de l’Industrie, Lyon', icon: 'fa-warehouse', url: "{{ url('/entrepots/1') }}" },
+            { type: 'Entrepôt', name: 'Entrepôt B - Paris Nord', detail: '45 Rue de la Logistique, Paris', icon: 'fa-warehouse', url: "{{ url('/entrepots/2') }}" },
+            { type: 'Entrepôt', name: 'Entrepôt C - Marseille Port', detail: '12 Boulevard des Docks, Marseille', icon: 'fa-warehouse', url: "{{ url('/entrepots/3') }}" },
+            { type: 'Entrepôt', name: 'Entrepôt D - Lille Est', detail: '8 Zone Industrielle, Lille', icon: 'fa-warehouse', url: "{{ url('/entrepots/4') }}" },
+            { type: 'Entrepôt', name: 'Entrepôt E - Bordeaux Ouest', detail: '14 Avenue du Vin, Bordeaux', icon: 'fa-warehouse', url: "{{ url('/entrepots/5') }}" },
+            { type: 'Entrepôt', name: 'Entrepôt F - Strasbourg Centre', detail: '3 Rue de l’Europe, Strasbourg', icon: 'fa-warehouse', url: "{{ url('/entrepots/6') }}" },
 
-            { type: 'Article', name: 'Palettes Europe (REF-1029)', detail: 'Quantité: 120 pcs - Entrepôt A (Lyon Sud)', icon: 'fa-box', url: "{{ url('/entrepots/lyon-sud') }}" },
-            { type: 'Article', name: 'Cartons de transport (REF-8492)', detail: 'Quantité: 450 pcs - Entrepôt B (Paris Nord)', icon: 'fa-box', url: "{{ url('/entrepots/paris-nord') }}" }
+            { type: 'Article', name: 'Palettes Europe (REF-1029)', detail: 'Quantité: 120 pcs - Entrepôt A (Lyon Sud)', icon: 'fa-box', url: "{{ url('/entrepots/1') }}" },
+            { type: 'Article', name: 'Cartons de transport (REF-8492)', detail: 'Quantité: 450 pcs - Entrepôt B (Paris Nord)', icon: 'fa-box', url: "{{ url('/entrepots/2') }}" }
         ];
 
         const filtered = mockDatabase.filter(item =>
