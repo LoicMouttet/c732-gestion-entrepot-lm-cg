@@ -6,5 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Entrepot extends Model
 {
-    //
+    protected $fillable = [
+        'nom',
+        'adresse',
+        'codePostal',
+        'ville',
+        'capaciteTotale',
+    ];
+
+    public function stocks()
+    {
+        return $this->hasMany(Stock::class);
+    }
 }
