@@ -31,9 +31,8 @@ class EntrepotController extends Controller
 
     public function show($id)
     {
-        // Récupère l'entrepôt ou renvoie une erreur 404 s'il n'existe pas
         $entrepot = Entrepot::with('stocks.produit')->findOrFail($id);
 
-        return view('entrepots.show', compact('entrepot'));
+        return view('show', compact('entrepot'));
     }
 }

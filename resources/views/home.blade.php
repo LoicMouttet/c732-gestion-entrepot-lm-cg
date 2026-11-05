@@ -92,7 +92,7 @@
                         <p class="card-text text-muted">🏙️ {{ $entrepot->codePostal }} {{ $entrepot->ville }}</p>
                     </div>
                     <div class="card-footer bg-transparent border-0 pb-3">
-                        <a href="#" class="btn btn-outline-primary w-100">Accéder au hangar</a>
+                        <a href="{{ route('entrepots.show', $entrepot->id) }}" class="btn btn-outline-primary w-100">Accéder au hangar</a>
                     </div>
                 </div>
             </div>
