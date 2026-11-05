@@ -3,63 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\Entrepot;
+use App\Models\Stock;
 use Illuminate\Http\Request;
 
 class EntrepotController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $search = $request->input('search');
+        $resultats = null;
+
+        // Récupération de tous les entrepôts pour la grille d'accueil
+        $entrepots = Entrepot::all();
+
+        // Si une recherche globale est effectuée
+        if ($search) {
+            $resultats = Stock::with(['produit', 'entrepot', 'entrepriseCliente'])
+                ->whereHas('produit', function ($query) use ($search) {
+                    $query->where('nom', 'like', "%{$search}%")
+                        ->orWhere('reference', 'like', "%{$search}%");
+                })
+                ->get();
+        }
+
+        return view('home', compact('entrepots', 'resultats', 'search'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function show($id)
     {
-        //
-    }
+        $entrepot = Entrepot::with('stocks.produit')->findOrFail($id);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Entrepot $entrepot)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Entrepot $entrepot)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Entrepot $entrepot)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Entrepot $entrepot)
-    {
-        //
+        return view('show', compact('entrepot'));
     }
 }
