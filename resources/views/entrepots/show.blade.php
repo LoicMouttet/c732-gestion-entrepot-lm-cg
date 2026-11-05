@@ -4,11 +4,11 @@
     <!-- En-tête de la page de l'entrepôt -->
     <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">{{ $entrepot['nom'] }}</h1>
-            <p class="text-sm text-gray-500"><i class="fa-solid fa-location-dot mr-1"></i> {{ $entrepot['adresse'] }}</p>
+            <h1 class="text-2xl font-bold text-gray-800">{{ $entrepot->nom }}</h1>
+            <p class="text-sm text-gray-500"><i class="fa-solid fa-location-dot mr-1"></i> {{ $entrepot->adresse }}</p>
         </div>
         <div class="flex items-center gap-3">
-            <a href="{{ url('/entrepots') }}" class="text-sm text-blue-900 hover:underline bg-white border border-gray-300 px-4 py-2 rounded-lg shadow-sm transition">
+            <a href="{{ route('home') }}" class="text-sm text-blue-900 hover:underline bg-white border border-gray-300 px-4 py-2 rounded-lg shadow-sm transition">
                 <i class="fa-solid fa-arrow-left mr-1"></i> Retour aux entrepôts
             </a>
             <button onclick="openAddModal()" class="bg-blue-900 hover:bg-blue-800 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-2">
@@ -57,28 +57,29 @@
             </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 text-sm text-gray-700">
-            <tr class="hover:bg-gray-50 transition">
-                <td class="py-4 px-6 font-medium text-blue-900">REF-8492</td>
-                <td class="py-4 px-6 font-medium text-gray-900">Cartons de transport (L)</td>
-                <td class="py-4 px-6"><span class="bg-gray-100 text-gray-700 text-xs font-medium px-2.5 py-1 rounded">Emballage</span></td>
-                <td class="py-4 px-6 font-semibold">450 pcs</td>
-                <td class="py-4 px-6 text-gray-500">Allée B - Travée 4</td>
-                <td class="py-4 px-6 text-right space-x-3">
-                    <button onclick="openEditModal('Cartons de transport (L)', 'REF-8492', 'Emballage', '450', 'Allée B - Travée 4')" class="text-blue-600 hover:text-blue-900 transition"><i class="fa-solid fa-pen"></i></button>
-                    <button onclick="openDeleteModal('Cartons de transport (L)')" class="text-red-600 hover:text-red-900 transition"><i class="fa-solid fa-trash"></i></button>
-                </td>
-            </tr>
-            <tr class="hover:bg-gray-50 transition">
-                <td class="py-4 px-6 font-medium text-blue-900">REF-1029</td>
-                <td class="py-4 px-6 font-medium text-gray-900">Palettes Europe</td>
-                <td class="py-4 px-6"><span class="bg-gray-100 text-gray-700 text-xs font-medium px-2.5 py-1 rounded">Stockage</span></td>
-                <td class="py-4 px-6 font-semibold">120 pcs</td>
-                <td class="py-4 px-6 text-gray-500">Allée A - Travée 1</td>
-                <td class="py-4 px-6 text-right space-x-3">
-                    <button onclick="openEditModal('Palettes Europe', 'REF-1029', 'Stockage', '120', 'Allée A - Travée 1')" class="text-blue-600 hover:text-blue-900 transition"><i class="fa-solid fa-pen"></i></button>
-                    <button onclick="openDeleteModal('Palettes Europe')" class="text-red-600 hover:text-red-900 transition"><i class="fa-solid fa-trash"></i></button>
-                </td>
-            </tr>
+            @forelse($entrepot->stocks as $stock)
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="py-4 px-6 font-medium text-blue-900">{{ $stock->produit->reference ?? 'N/A' }}</td>
+                    <td class="py-4 px-6 font-medium text-gray-900">{{ $stock->produit->nom ?? 'Produit sans nom' }}</td>
+                    <td class="py-4 px-6">
+                        <span class="bg-gray-100 text-gray-700 text-xs font-medium px-2.5 py-1 rounded">
+                            {{ $stock->produit->categorie ?? 'Standard' }}
+                        </span>
+                    </td>
+                    <td class="py-4 px-6 font-semibold">{{ $stock->quantite }} pcs</td>
+                    <td class="py-4 px-6 text-gray-500">{{ $stock->emplacement ?? 'Non assigné' }}</td>
+                    <td class="py-4 px-6 text-right space-x-3">
+                        <button class="text-blue-600 hover:text-blue-900 transition"><i class="fa-solid fa-pen"></i></button>
+                        <button class="text-red-600 hover:text-red-900 transition"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" class="py-6 text-center text-gray-500 text-sm">
+                        Aucun article en stock pour le moment dans cet entrepôt.
+                    </td>
+                </tr>
+            @endforelse
             </tbody>
         </table>
     </div>
