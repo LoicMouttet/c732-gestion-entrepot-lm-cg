@@ -13,7 +13,7 @@ class EntrepriseClienteFactory extends Factory
     {
         return [
             'raisonSociale' => $this->faker->company(),
-            'email' => $this->faker->unique()->companyEmail(),
+            'email' => $this->faker->companyEmail(),
             'telephone' => $this->faker->phoneNumber(),
         ];
     }
