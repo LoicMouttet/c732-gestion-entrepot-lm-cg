@@ -28,4 +28,12 @@ class EntrepotController extends Controller
 
         return view('home', compact('entrepots', 'resultats', 'search'));
     }
+
+    public function show($id)
+    {
+        // Récupère l'entrepôt ou renvoie une erreur 404 s'il n'existe pas
+        $entrepot = Entrepot::with('stocks.produit')->findOrFail($id);
+
+        return view('entrepots.show', compact('entrepot'));
+    }
 }
