@@ -15,7 +15,8 @@ class StockFactory extends Factory
     public function definition(): array
     {
         return [
-            'quantite' => $this->faker->numberBetween(0, 150),
+            // La quantité commence obligatoirement à 1 (pas de stock à 0)
+            'quantite' => $this->faker->numberBetween(1, 200),
             'dateMaj' => now(),
             'produit_id' => Produit::inRandomOrder()->first()?->id ?? Produit::factory(),
             'entrepot_id' => Entrepot::inRandomOrder()->first()?->id ?? 1,
