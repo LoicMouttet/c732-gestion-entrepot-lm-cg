@@ -37,4 +37,41 @@ class EntrepotController extends Controller
         // CORRECTION ICI : On pointe vers 'entrepots.show' au lieu de 'OLD_show'
         return view('entrepots.show', compact('entrepot'));
     }
+
+    // ==========================================
+    // MÉTHODES POUR L'API (Interne & Externe)
+    // ==========================================
+
+    /**
+     * API : Récupérer la liste de tous les entrepôts avec leurs stocks
+     */
+    public function apiIndex()
+    {
+        $entrepots = Entrepot::with('stocks.produit')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $entrepots
+        ], 200);
+    }
+
+    /**
+     * API : Récupérer un entrepôt spécifique par son ID
+     */
+    public function apiShow($id)
+    {
+        $entrepot = Entrepot::with('stocks.produit')->find($id);
+
+        if (!$entrepot) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Entrepôt non trouvé'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $entrepot
+        ], 200);
+    }
 }

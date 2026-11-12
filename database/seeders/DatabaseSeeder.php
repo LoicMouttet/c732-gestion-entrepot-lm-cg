@@ -62,7 +62,7 @@ class DatabaseSeeder extends Seeder
         // 2. Exécution des autres factories pour les clients, produits, collaborateurs et stock
         \App\Models\EntrepriseCliente::factory(10)->create();
         \App\Models\Collaborateur::factory(10)->create();
-        \App\Models\Produit::factory(20)->create();
+        \App\Models\Produit::factory(100)->create();
         \App\Models\Stock::factory(100)->create();
     }
 }
