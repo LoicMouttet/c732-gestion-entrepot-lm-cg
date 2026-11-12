@@ -17,7 +17,9 @@ class Stock extends Model
         'produit_id',
     ];
 
-    // Calcul dynamique du statut en fonction de la quantité
+    /**
+    - Calcul dynamique du statut en fonction de la quantité
+     */
     public function getStatutAttribute(): string
     {
         if ($this->quantite <= 0) {
@@ -28,12 +30,17 @@ class Stock extends Model
         return 'En Stock';
     }
 
-    // Relations utiles
+    /**
+    - Relation : Un stock est associé à un produit.
+     */
     public function produit()
     {
         return $this->belongsTo(Produit::class);
     }
 
+    /**
+    - Relation : Un stock est rattaché à un entrepôt.
+     */
     public function entrepot()
     {
         return $this->belongsTo(Entrepot::class);

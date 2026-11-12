@@ -18,6 +18,9 @@ class Collaborateur extends Model
         'entreprise_cliente_id',
     ];
 
+    /**
+    Relation : Un collaborateur appartient à une entreprise cliente.
+     */
     public function entrepriseCliente()
     {
         return $this->belongsTo(EntrepriseCliente::class);

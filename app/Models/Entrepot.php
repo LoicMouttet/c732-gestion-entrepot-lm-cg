@@ -14,6 +14,9 @@ class Entrepot extends Model
         'capaciteTotale',
     ];
 
+    /**
+    - Relation : Un entrepôt contient plusieurs stocks.
+     */
     public function stocks()
     {
         return $this->hasMany(Stock::class);
