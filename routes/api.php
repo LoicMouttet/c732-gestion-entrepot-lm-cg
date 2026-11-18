@@ -12,12 +12,30 @@ use App\Http\Controllers\EntrepotController;
 
 // 1. API INTERNE (Utilisée par le frontend de votre application / requêtes AJAX)
 Route::prefix('internal')->group(function () {
+
+    // --- Routes publiques (Lecture) ---
     Route::get('/entrepots', [EntrepotController::class, 'apiIndex']);
     Route::get('/entrepots/{id}', [EntrepotController::class, 'apiShow']);
+
+    // --- Routes protégées par Laravel Sanctum (Écriture / Modification) ---
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/entrepots', [EntrepotController::class, 'apiStore']);
+        Route::put('/entrepots/{id}', [EntrepotController::class, 'apiUpdate']);
+        Route::delete('/entrepots/{id}', [EntrepotController::class, 'apiDestroy']);
+    });
 });
 
 // 2. API EXTERNE (Destinée aux services tiers ou clients extérieurs)
 Route::prefix('v1')->group(function () {
+
+    // --- Routes publiques (Lecture) ---
     Route::get('/entrepots', [EntrepotController::class, 'apiIndex']);
     Route::get('/entrepots/{id}', [EntrepotController::class, 'apiShow']);
+
+    // --- Routes protégées par Laravel Sanctum ---
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/entrepots', [EntrepotController::class, 'apiStore']);
+        Route::put('/entrepots/{id}', [EntrepotController::class, 'apiUpdate']);
+        Route::delete('/entrepots/{id}', [EntrepotController::class, 'apiDestroy']);
+    });
 });
