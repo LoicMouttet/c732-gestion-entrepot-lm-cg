@@ -3,12 +3,16 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EntrepotController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 */
+
+// Route publique pour se connecter et récupérer un token Sanctum
+Route::post('/login', [AuthController::class, 'login']);
 
 // 1. API INTERNE (Utilisée par le frontend de votre application / requêtes AJAX)
 Route::prefix('internal')->group(function () {
