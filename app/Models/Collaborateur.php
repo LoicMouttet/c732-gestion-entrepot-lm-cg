@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Collaborateur extends Model
+class Collaborateur extends Authenticatable
 {
-    use HasFactory;
+    use HasApiTokens, Notifiable;
+
+    protected $table = 'collaborateurs';
 
     protected $fillable = [
         'nom',
@@ -15,14 +18,15 @@ class Collaborateur extends Model
         'email',
         'motDePasse',
         'role',
-        'entreprise_cliente_id',
     ];
 
-    /**
-    Relation : Un collaborateur appartient à une entreprise cliente.
-     */
-    public function entrepriseCliente()
+    protected $hidden = [
+        'motDePasse',
+    ];
+
+    // Indique à Laravel quelle colonne contient le mot de passe
+    public function getAuthPassword()
     {
-        return $this->belongsTo(EntrepriseCliente::class);
+        return $this->motDePasse;
     }
 }
