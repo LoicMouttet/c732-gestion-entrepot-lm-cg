@@ -17,18 +17,21 @@ Route::get('/login', function () {
     return view('auth.login');
 });
 
-// Traitement du formulaire de connexion web
+// Traitement du formulaire de connexion web (Email ou Nom d'utilisateur)
 Route::post('/login', function (Request $request) {
     $request->validate([
-        'email' => ['required', 'email'],
+        'email' => ['required', 'string'],
         'password' => ['required'],
     ], [
-        'email.required' => "L'adresse email est obligatoire.",
-        'email.email' => 'Veuillez saisir une adresse email valide.',
+        'email.required' => "L'identifiant ou l'adresse email est obligatoire.",
         'password.required' => 'Le mot de passe est obligatoire.',
     ]);
 
-    $collaborateur = Collaborateur::where('email', $request->email)->first();
+    $identifiant = trim($request->email);
+
+    $collaborateur = Collaborateur::where('email', $identifiant)
+        ->orWhere('nomuser', strtolower($identifiant))
+        ->first();
 
     $motDePasseValide = false;
     if ($collaborateur) {
@@ -44,7 +47,7 @@ Route::post('/login', function (Request $request) {
 
     if (! $collaborateur || ! $motDePasseValide) {
         return back()->withErrors([
-            'email' => 'Email ou mot de passe incorrect.',
+            'email' => 'Identifiant / email ou mot de passe incorrect.',
         ])->onlyInput('email');
     }
 

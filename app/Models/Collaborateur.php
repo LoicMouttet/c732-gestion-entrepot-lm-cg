@@ -15,6 +15,7 @@ class Collaborateur extends Authenticatable
     protected $fillable = [
         'nom',
         'prenom',
+        'nomuser',
         'email',
         'motDePasse',
         'role',
