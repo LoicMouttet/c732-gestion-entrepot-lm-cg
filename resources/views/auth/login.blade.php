@@ -38,52 +38,104 @@
         <img src="{{ asset('images/Logo_LogiFlex_transparent.png') }}" alt="LogiFlex Logo" class="h-24 object-contain drop-shadow-sm">
     </div>
 
+    <!-- Affichage des erreurs de validation / connexion -->
+    @if ($errors->any())
+        <div class="mb-5 rounded-xl bg-red-50 border border-red-200 p-3.5 text-xs text-red-700">
+            <ul class="list-disc list-inside space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <!-- Formulaire -->
-    <div class="space-y-5">
+    <form method="POST" action="{{ url('/login') }}" class="space-y-5">
+        @csrf
+
         <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nom d'utilisateur / Email</label>
+            <label for="email" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nom d'utilisateur / Email</label>
             <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
-                        <i class="fa-solid fa-user text-xs"></i>
-                    </span>
-                <input type="text" placeholder="nom@logiflex.com" class="w-full bg-gray-50/80 border border-gray-300 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white transition-all">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
+                    <i class="fa-solid fa-user text-xs"></i>
+                </span>
+                <input
+                    id="email"
+                    type="text"
+                    name="email"
+                    value="{{ old('email') }}"
+                    placeholder="nom@logiflex.com"
+                    required
+                    autofocus
+                    class="w-full bg-gray-50/80 border border-gray-300 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white transition-all"
+                >
             </div>
         </div>
 
         <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Mot de passe</label>
+            <label for="password" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Mot de passe</label>
             <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
-                        <i class="fa-solid fa-lock text-xs"></i>
-                    </span>
-                <input type="password" placeholder="••••••••" class="w-full bg-gray-50/80 border border-gray-300 rounded-xl pl-10 pr-10 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white transition-all">
-                <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400 cursor-pointer hover:text-gray-600">
-                        <i class="fa-solid fa-eye-slash text-sm"></i>
-                    </span>
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
+                    <i class="fa-solid fa-lock text-xs"></i>
+                </span>
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    placeholder="••••••••"
+                    required
+                    class="w-full bg-gray-50/80 border border-gray-300 rounded-xl pl-10 pr-10 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white transition-all"
+                >
+                <button
+                    type="button"
+                    id="togglePassword"
+                    aria-label="Afficher ou masquer le mot de passe"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400 cursor-pointer hover:text-gray-600 focus:outline-none"
+                >
+                    <i id="togglePasswordIcon" class="fa-solid fa-eye-slash text-sm"></i>
+                </button>
             </div>
         </div>
 
         <!-- Options (Se souvenir / Mot de passe oublié) -->
         <div class="flex items-center justify-between text-xs text-gray-600 pt-1">
             <label class="flex items-center space-x-2 cursor-pointer">
-                <input type="checkbox" class="rounded border-gray-300 text-blue-900 focus:ring-blue-900">
+                <input type="checkbox" name="remember" class="rounded border-gray-300 text-blue-900 focus:ring-blue-900">
                 <span>Se souvenir de moi</span>
             </label>
             <a href="#" class="text-blue-900 font-semibold hover:underline">Mot de passe oublié ?</a>
         </div>
 
         <div class="pt-3">
-            <a href="{{ url('/entrepots') }}" class="block w-full text-center btn-logiflex text-white font-semibold py-3.5 px-4 rounded-xl text-sm transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+            <button type="submit" class="block w-full text-center btn-logiflex text-white font-semibold py-3.5 px-4 rounded-xl text-sm transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 cursor-pointer">
                 Se Connecter <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
-            </a>
+            </button>
         </div>
-    </div>
+    </form>
 
     <!-- Footer discret de la carte -->
     <div class="mt-8 text-center border-t border-gray-100 pt-4">
         <p class="text-[11px] text-gray-400">LogiFlex v2.4 • Système de gestion sécurisé</p>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleBtn = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('togglePasswordIcon');
+
+        if (toggleBtn && passwordInput && toggleIcon) {
+            toggleBtn.addEventListener('click', function () {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+
+                toggleIcon.classList.toggle('fa-eye-slash', !isPassword);
+                toggleIcon.classList.toggle('fa-eye', isPassword);
+            });
+        }
+    });
+</script>
 
 </body>
 </html>
