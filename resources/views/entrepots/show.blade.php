@@ -58,7 +58,7 @@
             </thead>
             <tbody class="divide-y divide-gray-200 text-sm text-gray-700">
             @forelse($entrepot->stocks as $stock)
-                <tr class="hover:bg-gray-50 transition">
+                <tr id="article-{{ $stock->id }}" class="hover:bg-gray-50 transition">
                     <td class="py-4 px-6 font-medium text-blue-900">{{ $stock->produit->reference ?? 'N/A' }}</td>
                     <td class="py-4 px-6 font-medium text-gray-900">{{ $stock->produit->nom ?? 'Produit sans nom' }}</td>
                     <td class="py-4 px-6">
@@ -138,7 +138,7 @@
         </div>
     </div>
 
-    <!-- Scripts pour la gestion du tableau et des modales -->
+    <!-- Scripts pour la gestion du tableau, des modales et du ciblage d'article -->
     <script>
         function filterTable() {
             const query = document.getElementById('searchInput').value.toLowerCase();
@@ -147,7 +147,7 @@
 
             rows.forEach(row => {
                 const text = row.innerText.toLowerCase();
-                const rowCategory = row.children[2].innerText.toLowerCase();
+                const rowCategory = row.children[2] ? row.children[2].innerText.toLowerCase() : '';
                 const matchesQuery = text.includes(query);
                 const matchesCategory = category === "" || rowCategory.includes(category);
 
@@ -200,5 +200,23 @@
             alert("Article supprimé avec succès !");
             closeDeleteModal();
         }
+
+        function focusTargetArticle() {
+            const hash = window.location.hash;
+            if (!hash || !hash.startsWith('#article-')) return;
+
+            const target = document.querySelector(hash);
+            if (!target) return;
+
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            target.classList.add('ring-2', 'ring-blue-900', 'bg-blue-50', 'transition', 'duration-500');
+
+            setTimeout(() => {
+                target.classList.remove('ring-2', 'ring-blue-900', 'bg-blue-50');
+            }, 2500);
+        }
+
+        document.addEventListener('DOMContentLoaded', focusTargetArticle);
+        window.addEventListener('hashchange', focusTargetArticle);
     </script>
 @endsection
