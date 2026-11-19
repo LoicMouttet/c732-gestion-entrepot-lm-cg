@@ -59,8 +59,111 @@
     &copy; {{ date('Y') }} LogiFlex - Tous droits réservés.
 </footer>
 
-<!-- Script global (Menu Burger + Recherche globale avec les 6 entrepôts) -->
+@php
+    $globalItems = collect();
+    $entrepotNames = [];
+    $zoneToEntrepot = [];
+    $defaultEntrepotId = null;
+
+    // 1. Entrepôts
+    foreach ($globalSearchEntrepots ?? [] as $e) {
+        $arr = is_array($e) ? $e : (method_exists($e, 'toArray') ? $e->toArray() : (array) $e);
+        $id = $arr['id'] ?? null;
+        if ($id && is_null($defaultEntrepotId)) {
+            $defaultEntrepotId = $id;
+        }
+        $nom = $arr['nom'] ?? $arr['name'] ?? $arr['titre'] ?? '';
+        $adresse = $arr['adresse'] ?? $arr['rue'] ?? $arr['zone'] ?? $arr['ville'] ?? '';
+
+        if ($id && $nom !== '') {
+            $entrepotNames[$id] = $nom;
+        }
+
+        $globalItems->push([
+            'type'   => 'Entrepôt',
+            'name'   => $nom,
+            'detail' => $adresse,
+            'icon'   => 'fa-warehouse',
+            'url'    => $id ? url('/entrepots/' . $id) : route('home'),
+        ]);
+    }
+
+    // 2. Zones
+    foreach ($globalSearchZones ?? [] as $z) {
+        $arr = is_array($z) ? $z : (method_exists($z, 'toArray') ? $z->toArray() : (array) $z);
+        $id = $arr['id'] ?? null;
+        $nom = $arr['nom'] ?? $arr['name'] ?? $arr['code'] ?? $arr['libelle'] ?? '';
+        $rue = $arr['rue'] ?? $arr['adresse'] ?? $arr['description'] ?? '';
+        $entrepotId = $arr['entrepot_id'] ?? $arr['warehouse_id'] ?? $defaultEntrepotId;
+
+        if ($id && $entrepotId) {
+            $zoneToEntrepot[$id] = $entrepotId;
+        }
+
+        $globalItems->push([
+            'type'   => 'Zone',
+            'name'   => $nom,
+            'detail' => $rue,
+            'icon'   => 'fa-layer-group',
+            'url'    => $entrepotId ? url('/entrepots/' . $entrepotId) : route('home'),
+        ]);
+    }
+
+    // 3. Articles via les lignes de stock (1 résultat distinct par entrepôt où l'article est présent)
+    foreach ($globalSearchStocks ?? [] as $s) {
+        $stockId = is_array($s) ? ($s['id'] ?? null) : ($s->id ?? null);
+        $qte = is_array($s) ? ($s['quantite'] ?? null) : ($s->quantite ?? null);
+        $emplacement = is_array($s) ? ($s['emplacement'] ?? null) : ($s->emplacement ?? null);
+        $zoneId = is_array($s) ? ($s['zone_id'] ?? null) : ($s->zone_id ?? null);
+
+        $entrepotObj = is_array($s) ? ($s['entrepot'] ?? null) : ($s->entrepot ?? null);
+        $entrepotId = is_array($s)
+            ? ($s['entrepot_id'] ?? ($entrepotObj['id'] ?? null))
+            : ($s->entrepot_id ?? ($entrepotObj->id ?? null));
+
+        $entrepotId = $entrepotId
+            ?? ($zoneId && isset($zoneToEntrepot[$zoneId]) ? $zoneToEntrepot[$zoneId] : null)
+            ?? $defaultEntrepotId;
+
+        $entrepotNom = is_array($entrepotObj)
+            ? ($entrepotObj['nom'] ?? null)
+            : ($entrepotObj->nom ?? ($entrepotId && isset($entrepotNames[$entrepotId]) ? $entrepotNames[$entrepotId] : null));
+
+        $produitObj = is_array($s) ? ($s['produit'] ?? null) : ($s->produit ?? null);
+        $prodArr = $produitObj
+            ? (is_array($produitObj) ? $produitObj : (method_exists($produitObj, 'toArray') ? $produitObj->toArray() : (array) $produitObj))
+            : (is_array($s) ? $s : (method_exists($s, 'toArray') ? $s->toArray() : (array) $s));
+
+        $nom = $prodArr['nom'] ?? $prodArr['name'] ?? $prodArr['designation'] ?? $prodArr['titre'] ?? '';
+        $ref = $prodArr['reference'] ?? $prodArr['ref'] ?? $prodArr['code'] ?? '';
+
+        $detailParties = array_filter([
+            $entrepotNom ? $entrepotNom : null,
+            $ref !== '' ? "Réf : $ref" : null,
+            !is_null($qte) && $qte !== '' ? "Quantité : $qte pcs" : null,
+            $emplacement ? $emplacement : null,
+        ]);
+
+        if ($nom !== '' || !empty($detailParties)) {
+            $anchorId = $stockId ?? ($prodArr['id'] ?? null);
+            $anchor = $anchorId ? '#article-' . $anchorId : '';
+            $baseUrl = $entrepotId ? url('/entrepots/' . $entrepotId) : route('home');
+
+            $globalItems->push([
+                'type'   => 'Article',
+                'name'   => $nom !== '' ? $nom : ($ref ?: "Article #$anchorId"),
+                'detail' => implode(' — ', $detailParties),
+                'icon'   => 'fa-box',
+                'url'    => $baseUrl . $anchor,
+            ]);
+        }
+    }
+@endphp
+
+    <!-- Script global (Menu Burger + Recherche globale) -->
 <script>
+    const GLOBAL_SEARCH_DATA = @json($globalItems->values()->all());
+
     function toggleUserMenu() {
         const menu = document.getElementById('userDropdown');
         menu.classList.toggle('hidden');
@@ -69,29 +172,18 @@
     function handleGlobalSearch(query) {
         const resultsBox = document.getElementById('globalSearchResults');
         const listContainer = document.getElementById('searchResultsList');
+        const cleanQuery = query.trim().toLowerCase();
 
-        if (query.trim() === '') {
+        if (cleanQuery === '') {
             resultsBox.classList.add('hidden');
             listContainer.innerHTML = '';
             return;
         }
 
-        // Données reliées aux ID de la base de données (1 à 6)
-        const mockDatabase = [
-            { type: 'Entrepôt', name: 'Entrepôt A - Lyon Sud', detail: '123 Avenue de l’Industrie, Lyon', icon: 'fa-warehouse', url: "{{ url('/entrepots/1') }}" },
-            { type: 'Entrepôt', name: 'Entrepôt B - Paris Nord', detail: '45 Rue de la Logistique, Paris', icon: 'fa-warehouse', url: "{{ url('/entrepots/2') }}" },
-            { type: 'Entrepôt', name: 'Entrepôt C - Marseille Port', detail: '12 Boulevard des Docks, Marseille', icon: 'fa-warehouse', url: "{{ url('/entrepots/3') }}" },
-            { type: 'Entrepôt', name: 'Entrepôt D - Lille Est', detail: '8 Zone Industrielle, Lille', icon: 'fa-warehouse', url: "{{ url('/entrepots/4') }}" },
-            { type: 'Entrepôt', name: 'Entrepôt E - Bordeaux Ouest', detail: '14 Avenue du Vin, Bordeaux', icon: 'fa-warehouse', url: "{{ url('/entrepots/5') }}" },
-            { type: 'Entrepôt', name: 'Entrepôt F - Strasbourg Centre', detail: '3 Rue de l’Europe, Strasbourg', icon: 'fa-warehouse', url: "{{ url('/entrepots/6') }}" },
-
-            { type: 'Article', name: 'Palettes Europe (REF-1029)', detail: 'Quantité: 120 pcs - Entrepôt A (Lyon Sud)', icon: 'fa-box', url: "{{ url('/entrepots/1') }}" },
-            { type: 'Article', name: 'Cartons de transport (REF-8492)', detail: 'Quantité: 450 pcs - Entrepôt B (Paris Nord)', icon: 'fa-box', url: "{{ url('/entrepots/2') }}" }
-        ];
-
-        const filtered = mockDatabase.filter(item =>
-            item.name.toLowerCase().includes(query.toLowerCase()) ||
-            item.detail.toLowerCase().includes(query.toLowerCase())
+        const filtered = GLOBAL_SEARCH_DATA.filter(item =>
+            (item.name && item.name.toLowerCase().includes(cleanQuery)) ||
+            (item.detail && item.detail.toLowerCase().includes(cleanQuery)) ||
+            (item.type && item.type.toLowerCase().includes(cleanQuery))
         );
 
         listContainer.innerHTML = '';
@@ -99,16 +191,19 @@
         if (filtered.length > 0) {
             filtered.forEach(item => {
                 listContainer.innerHTML += `
-                        <a href="${item.url}" class="flex items-start px-4 py-2.5 hover:bg-gray-50 transition border-b border-gray-100 last:border-none">
-                            <div class="bg-blue-50 text-blue-900 p-2 rounded-md mr-3 mt-0.5">
-                                <i class="fa-solid ${item.icon} text-xs"></i>
+                    <a href="${item.url}" class="flex items-start px-4 py-2.5 hover:bg-gray-50 transition border-b border-gray-100 last:border-none">
+                        <div class="bg-blue-50 text-blue-900 p-2 rounded-md mr-3 mt-0.5">
+                            <i class="fa-solid ${item.icon} text-xs"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-gray-800">
+                                ${item.name}
+                                <span class="text-[10px] font-normal text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded ml-1">${item.type}</span>
                             </div>
-                            <div>
-                                <div class="text-xs font-bold text-gray-800">${item.name} <span class="text-[10px] font-normal text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded ml-1">${item.type}</span></div>
-                                <div class="text-xs text-gray-500">${item.detail}</div>
-                            </div>
-                        </a>
-                    `;
+                            <div class="text-xs text-gray-500">${item.detail}</div>
+                        </div>
+                    </a>
+                `;
             });
         } else {
             listContainer.innerHTML = `<div class="px-4 py-3 text-xs text-gray-500 text-center">Aucun résultat trouvé pour "${query}"</div>`;
