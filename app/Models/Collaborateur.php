@@ -23,6 +23,7 @@ class Collaborateur extends Authenticatable
 
     protected $hidden = [
         'motDePasse',
+        'remember_token',
     ];
 
     // Indique à Laravel quelle colonne contient le mot de passe
