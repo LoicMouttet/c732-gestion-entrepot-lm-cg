@@ -86,9 +86,14 @@
                     required
                     class="w-full bg-gray-50/80 border border-gray-300 rounded-xl pl-10 pr-10 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white transition-all"
                 >
-                <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400 cursor-pointer hover:text-gray-600">
-                    <i class="fa-solid fa-eye-slash text-sm"></i>
-                </span>
+                <button
+                    type="button"
+                    id="togglePassword"
+                    aria-label="Afficher ou masquer le mot de passe"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400 cursor-pointer hover:text-gray-600 focus:outline-none"
+                >
+                    <i id="togglePasswordIcon" class="fa-solid fa-eye-slash text-sm"></i>
+                </button>
             </div>
         </div>
 
@@ -113,6 +118,24 @@
         <p class="text-[11px] text-gray-400">LogiFlex v2.4 • Système de gestion sécurisé</p>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleBtn = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('togglePasswordIcon');
+
+        if (toggleBtn && passwordInput && toggleIcon) {
+            toggleBtn.addEventListener('click', function () {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+
+                toggleIcon.classList.toggle('fa-eye-slash', !isPassword);
+                toggleIcon.classList.toggle('fa-eye', isPassword);
+            });
+        }
+    });
+</script>
 
 </body>
 </html>
