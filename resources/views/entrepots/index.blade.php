@@ -53,6 +53,7 @@
                         $nomEntrepot = is_array($entrepot) ? $entrepot['nom'] : $entrepot->nom;
                         $adresseEntrepot = is_array($entrepot) ? $entrepot['adresse'] : $entrepot->adresse;
                         $idEntrepot = is_array($entrepot) ? $entrepot['id'] : $entrepot->id;
+                        $temperatureEntrepot = is_array($entrepot) ? ($entrepot['temperature'] ?? null) : ($entrepot->temperature ?? null);
                         $currentImage = $getEntrepotImage($nomEntrepot, $index);
                     @endphp
 
@@ -63,7 +64,20 @@
                             </div>
 
                             <div class="p-5 space-y-1">
-                                <h3 class="font-bold text-base text-gray-900">{{ $nomEntrepot }}</h3>
+                                <div class="flex items-start justify-between gap-2">
+                                    <h3 class="font-bold text-base text-gray-900">{{ $nomEntrepot }}</h3>
+
+                                    @if(!is_null($temperatureEntrepot))
+                                        <span class="shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-[#1e3a8a] border border-blue-200">
+                                            <i class="fa-solid fa-temperature-half mr-1"></i>{{ round($temperatureEntrepot, 1) }} °C
+                                        </span>
+                                    @else
+                                        <span class="shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
+                                            N/A
+                                        </span>
+                                    @endif
+                                </div>
+
                                 <p class="text-xs text-gray-500"><i class="fa-solid fa-location-dot mr-1.5 text-gray-400"></i>{{ $adresseEntrepot }}</p>
                             </div>
                         </div>

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Collaborateur;
 use App\Http\Controllers\EntrepotController;
 
-// 1. Page d'accueil (URL racine '/') : Affiche la page de connexion
+// Page d'accueil (URL racine '/') : Affiche la page de connexion
 Route::get('/', function () {
     return view('auth.login');
 })->name('login');
@@ -65,7 +65,7 @@ Route::post('/logout', function (Request $request) {
     return redirect('/login');
 })->name('logout');
 
-// 2. Routes protégées (nécessite d'être connecté en session web)
+// Routes protégées (nécessite d'être connecté en session web)
 Route::middleware('auth')->group(function () {
     Route::get('/entrepots', [EntrepotController::class, 'index'])->name('home');
     Route::get('/entrepots/{id}', [EntrepotController::class, 'show'])->name('entrepots.show');
